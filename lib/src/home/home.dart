@@ -88,7 +88,6 @@ class _HomeState extends State<Home> {
             unselectedLabelColor: Colors.white54,
             labelColor: Colors.white,
             tabs: _kTabs,
-            isScrollable: true,
           ),
         ),
         body: TabBarView(

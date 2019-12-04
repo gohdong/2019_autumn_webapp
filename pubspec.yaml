@@ -25,7 +25,7 @@ dependencies:
   expandable:
   http:
   path_provider:
-  firebase:
+  firebase: ^5.0.0
   firebase_messaging:
   device_info:
   date_format:

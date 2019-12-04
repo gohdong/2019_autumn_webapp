@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +13,7 @@ import 'package:untitled3/src/home/notice.dart';
 import 'package:untitled3/src/quiz/quiz.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firebase.dart';
 
 const bool kIsWeb = identical(0, 0.0);
 
@@ -25,6 +24,22 @@ FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 void main() async {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  initializeApp(
+      apiKey: "AIzaSyDURYgJbUmKTcZ0gY5LUitEyUKGiOH1OCE",
+      authDomain: "selab-2760b.firebaseapp.com",
+      databaseURL: "https://selab-2760b.firebaseio.com",
+      projectId: "selab-2760b",
+      storageBucket: "selab-2760b.appspot.com",
+      messagingSenderId: "205718891635");
+
+//  Database db = database();
+//  DatabaseReference ref = db.ref("messages");
+//
+//  ref.onValue.listen((e) {
+//    DataSnapshot datasnapshot = e.snapshot;
+//    // Do something with datasnapshot
+//  });
+
   runApp(MyApp());
 }
 
@@ -119,29 +134,6 @@ class _MyAppState extends State<MyApp> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
     db.document('device');
-    if (Platform.isIOS) {
-      iOS_Permission();
-      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-      _firebaseMessaging.getToken().then((token) {
-        print(token);
-        db
-            .collection('device')
-            .document(iosDeviceInfo.identifierForVendor)
-            .setData({
-          'token': token,
-        }, merge: true);
-      });
-    }
-
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-      _firebaseMessaging.getToken().then((token) {
-        print(token);
-        db.collection('device').document(androidDeviceInfo.androidId).setData({
-          'token': token,
-        }, merge: true);
-      });
-    }
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -155,15 +147,6 @@ class _MyAppState extends State<MyApp> {
         print('on launch $message');
       },
     );
-  }
-
-  void iOS_Permission() {
-    _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, badge: true, alert: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
   }
 
   Future<void> showNotification(String body) async {

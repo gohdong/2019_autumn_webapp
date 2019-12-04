@@ -5,16 +5,42 @@
   <title>selab</title>
 </head>
 <body>
+
   <script src="main.dart.js" type="application/javascript"></script>
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
 
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
 <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-analytics.js"></script>
 
 <script>
-  // Your web app's Firebase configuration
+  // const firebase = require("firebase");
+  // Required for side-effects
+  require("firebase/firestore");
+
+  // const admin = require('firebase-admin');
+  // var firebase = require("firebase/app");
+  // var config = require('./src/config');
+  //
+  //
+  //
+  // // Add the Firebase products that you want to use
+  require("firebase/auth");
+  const firebaseConfig = {
+    apiKey: "AIzaSyDURYgJbUmKTcZ0gY5LUitEyUKGiOH1OCE",
+    authDomain: "selab-2760b.firebaseapp.com",
+    databaseURL: "https://selab-2760b.firebaseio.com",
+    projectId: "selab-2760b",
+    storageBucket: "selab-2760b.appspot.com",
+    messagingSenderId: "205718891635",
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
 
 </script>
 
