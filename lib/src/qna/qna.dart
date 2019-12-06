@@ -329,8 +329,7 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
   Widget buildAnswer(String questionID) {
     return StreamBuilder(
       stream: Firestore.instance
-          .collection('answer')
-          .where('question', isEqualTo: questionID)
+          .collection('question').document(questionID).collection('reply')
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -343,14 +342,14 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return buildReplyTile(snapshot.data.documents[index]);
+            return buildReplyTile(questionID,snapshot.data.documents[index]);
           },
         );
       },
     );
   }
 
-  Widget buildReplyTile(DocumentSnapshot document) {
+  Widget buildReplyTile(String questionID,DocumentSnapshot document) {
     return Container(
       margin: EdgeInsets.only(left: 50, right: 10, top: 10),
       padding: EdgeInsets.all(20),
@@ -373,7 +372,7 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
                   ? Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[removeAnswer(document)],
+                        children: <Widget>[removeAnswer(questionID,document)],
                       ),
                     )
                   : Container()
@@ -449,7 +448,7 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
     );
   }
 
-  void _confirmDelAnswer(BuildContext context, DocumentSnapshot document) {
+  void _confirmDelAnswer(BuildContext context, String questionID,DocumentSnapshot document) {
     // flutter defined function
     showDialog(
       context: context,
@@ -464,8 +463,8 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
               child: new Text("Confirm"),
               onPressed: () async {
                 await Firestore.instance
-                    .collection('answer')
-                    .document(document.documentID)
+                    .collection('question')
+                    .document(questionID).collection('reply').document(document.documentID)
                     .delete();
                 Navigator.of(context).pop();
               },
@@ -493,11 +492,11 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget removeAnswer(DocumentSnapshot document) {
+  Widget removeAnswer(String questionID,DocumentSnapshot document) {
     return IconButton(
       icon: Icon(Icons.delete_forever),
       onPressed: () {
-        _confirmDelAnswer(context, document);
+        _confirmDelAnswer(context, questionID,document);
       },
     );
   }

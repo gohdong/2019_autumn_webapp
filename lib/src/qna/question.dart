@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -166,6 +167,8 @@ class _AddQuestionState extends State<AddQuestion> {
   }
 
   void _showDialog(BuildContext context) {
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    var docID = email3.split('@')[0].toUpperCase()+DateTime.now().toString().split('.')[0];
     // flutter defined function
     showDialog(
       context: context,
@@ -179,7 +182,7 @@ class _AddQuestionState extends State<AddQuestion> {
             new FlatButton(
               child: new Text("Confirm"),
               onPressed: () async {
-                await Firestore.instance.collection('question').add({
+                await Firestore.instance.collection('question').document(docID).setData({
                         'title': _title.text,
                         'description': _description.text,
                         'questioner': email3,
@@ -187,6 +190,16 @@ class _AddQuestionState extends State<AddQuestion> {
                         'date': DateTime.now(),
                   'anonymous' : anonymous,
                       });
+
+                await _firebaseMessaging.getToken().then((token) {
+                  print(token);
+                  Firestore.instance
+                      .collection('question')
+                      .document(docID).collection('participants').document(email3)
+                      .setData({
+                    'token': token,
+                  }, merge: true);
+                });
 
 //                Navigator.of(context)
 //                    .popUntil(MaterialPageRoute(builder: (context) => Notice()));

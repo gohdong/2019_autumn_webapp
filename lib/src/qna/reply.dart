@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -122,6 +123,8 @@ class _AddReplyState extends State<AddReply> {
 
   void _showDialog(BuildContext context) {
     // flutter defined function
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -134,7 +137,8 @@ class _AddReplyState extends State<AddReply> {
             new FlatButton(
               child: new Text("Confirm"),
               onPressed: () async {
-                await Firestore.instance.collection('answer').add({
+                await Firestore.instance.collection('question')
+                    .document(questionId).collection('reply').add({
                   'title': _title.text,
                   'description': _description.text,
                   'date': DateTime.now(),
@@ -142,9 +146,19 @@ class _AddReplyState extends State<AddReply> {
                   'writer' : email3
                 });
 
+                await _firebaseMessaging.getToken().then((token) {
+                  print(token);
+                  Firestore.instance
+                      .collection('question')
+                      .document(questionId).collection('participants').document(email3)
+                      .setData({
+                    'token': token,
+                  }, merge: true);
+                });
+
 //                await Firestore.instance
 //                    .collection('question')
-//                    .document(questionId)
+//                    .document(questionId).collection('reply').document(email3)
 //                    .updateData({"reply": true});
 
 //                Navigator.of(context)

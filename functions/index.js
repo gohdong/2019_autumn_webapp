@@ -78,7 +78,7 @@ exports.sendNoticeNotifi = functions.firestore
             });
     });
 
-exports.sendQuestionNotifi2Adimin = functions.firestore
+exports.sendQuestionNotifi2ALL = functions.firestore
     .document('question/{questionId}')
     .onCreate(async snapshot => {
 
@@ -108,12 +108,12 @@ exports.sendQuestionNotifi2Adimin = functions.firestore
             });
     });
 
-exports.sendAnswerNotifi2Questioner = functions.firestore
-    .document('answer/{answerId}')
+exports.sendAnswerNotifi2Participants = functions.firestore
+    .document('question/{questionId}/reply/{replyID}')
     .onCreate(async snapshot => {
 
         const answer = snapshot.data();
-        const querySnapshot = await db.collection('tokens').get();
+        const querySnapshot = await db.collection('question/'+answer.question+'/participants').get();
         const getTokens = querySnapshot.docs.map(snap => snap.data().token);
 
         const test = await db.collection('question').doc(answer.question).get();
@@ -141,3 +141,37 @@ exports.sendAnswerNotifi2Questioner = functions.firestore
             });
 
     });
+
+// exports.sendAnswerNotifi2Questioner = functions.firestore
+//     .document('answer/{answerId}')
+//     .onCreate(async snapshot => {
+//
+//         const answer = snapshot.data();
+//         const querySnapshot = await db.collection('tokens').get();
+//         const getTokens = querySnapshot.docs.map(snap => snap.data().token);
+//
+//         const test = await db.collection('question').doc(answer.question).get();
+//
+//
+//
+//
+//         const message = {
+//             notification: {
+//                 title: "Reply for "+test.data().title,
+//                 body: answer.title,
+//             },
+//             tokens: getTokens
+//         };
+//
+//         admin.messaging().sendMulticast(message)
+//             .then((response) => {
+//                 // Response is a message ID string.
+//                 console.log('Successfully sent message:', response);
+//                 return null;
+//             })
+//             .catch((error) => {
+//                 console.log('Error sending message:', error);
+//                 throw new Error("Profile doesn't exist");
+//             });
+//
+//     });
