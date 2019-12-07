@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final _formKey = new GlobalKey<FormState>();
 
   final databaseReference = Firestore.instance;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   String _email;
   String _password;
@@ -52,6 +54,18 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       'grade_quiz': 0,
       'grade_project':0,
       'img': 'https://i.stack.imgur.com/l60Hf.png',
+    });
+    await _firebaseMessaging.getToken().then((token) {
+      print(token);
+      Firestore.instance
+          .collection('tokens')
+          .document(email)
+          .setData({
+        'token': token,
+        'quizNotification' : true,
+        'noticeNotification' : true,
+        'questionNotification' : true,
+      }, merge: true);
     });
   }
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-//  final BaseAuth auth;
-//  final VoidCallback onSignedOut;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  bool noticeNotification;
+  bool quizNotification;
+  bool questionNotification;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserNotificationSetting();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +66,25 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           centerTitle: true,
           leading: email3 == "aldehf420@gmail.com"
-              ? Center(child: Text("  ADMIN",textScaleFactor: 1,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red),))
-              : null,
+              ? Center(
+                  child: FlatButton(
+                    padding: EdgeInsets.all(0),
+                    onPressed: (){
+                      _settingModalBottomSheet(context);
+                    },
+                    child: Text(
+                    "  ADMIN",
+                    textScaleFactor: 1,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                ),
+                  ))
+              : email3 == null
+                  ? Container()
+                  : IconButton(
+                      icon: Icon(Icons.settings),
+                      onPressed: () => _settingModalBottomSheet(context),
+                    ),
           title: FlatButton(
             padding: EdgeInsets.all(0),
             child:
@@ -80,8 +105,8 @@ class _HomeState extends State<Home> {
                   )
                 : IconButton(
                     icon: Icon(Icons.person_outline),
-                    onPressed: () => _showDialog(context),
-                  )
+                    onPressed: () => _confirmSignOut(context),
+                  ),
           ],
           bottom: TabBar(
             indicatorColor: Colors.orangeAccent,
@@ -98,7 +123,110 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _showDialog(BuildContext context) {
+  Future<void> getUserNotificationSetting() async {
+    var document =
+        await Firestore.instance.collection('tokens').document(email3).get();
+    setState(() {
+      noticeNotification = document['noticeNotification'];
+      quizNotification = document['quizNotification'];
+      questionNotification = document['questionNotification'];
+    });
+
+    print(noticeNotification);
+  }
+
+  void _settingModalBottomSheet(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                child: new Wrap(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Center(
+                        child: Text(
+                          "Push Notification",
+                          textScaleFactor: 2,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20, bottom: 20),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("Notice"),
+                                Checkbox(
+                                  value: noticeNotification,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      noticeNotification = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("Question"),
+                                Checkbox(
+                                  value: questionNotification,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      questionNotification = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("Quiz"),
+                                Checkbox(
+                                  value: quizNotification,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      quizNotification = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FlatButton(
+                      padding: EdgeInsets.all(0),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.only(left: 10, right: 10),
+                          decoration: BoxDecoration(color: Colors.orangeAccent),
+                          child: Center(child: Text("Update"))),
+                      onPressed: () {
+                        _confirmUpdateNotification(context);
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _confirmSignOut(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -116,6 +244,45 @@ class _HomeState extends State<Home> {
                   email3 = null;
                 });
                 Navigator.of(context).pop();
+              },
+              textColor: Colors.blue,
+            ),
+            new FlatButton(
+              child: new Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              textColor: Colors.red,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmUpdateNotification(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return CupertinoAlertDialog(
+          title: new Text("Alert"),
+          content: new Text("Do you want Update"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Confirm"),
+              onPressed: () async {
+                await Firestore.instance
+                    .collection('tokens')
+                    .document(email3)
+                    .updateData({
+                  'noticeNotification': noticeNotification,
+                  'quizNotification': quizNotification,
+                  'questionNotification': questionNotification,
+                });
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
               },
               textColor: Colors.blue,
             ),

@@ -25,7 +25,7 @@ exports.sendQuizNotifi = functions.firestore
 
 
         const quiz = snapshot.data();
-        const querySnapshot = await db.collection('tokens').get();
+        const querySnapshot = await db.collection('tokens').where('quizNotification','==',true).get();
         const getTokens = querySnapshot.docs.map(snap => snap.data().token);
 
         const message = {
@@ -54,7 +54,7 @@ exports.sendNoticeNotifi = functions.firestore
 
 
         const notice = snapshot.data();
-        const querySnapshot = await db.collection('tokens').get();
+        const querySnapshot = await db.collection('tokens').where('noticeNotification','==',true).get();
         const getTokens = querySnapshot.docs.map(snap => snap.data().token);
 
 
@@ -78,13 +78,13 @@ exports.sendNoticeNotifi = functions.firestore
             });
     });
 
-exports.sendQuestionNotifi2ALL = functions.firestore
+exports.sendQuestionNotifi = functions.firestore
     .document('question/{questionId}')
     .onCreate(async snapshot => {
 
 
         const question = snapshot.data();
-        const querySnapshot = await db.collection('tokens').get();
+        const querySnapshot = await db.collection('tokens').where('questionNotification','==',true).get();
         const getTokens = querySnapshot.docs.map(snap => snap.data().token);
 
 
