@@ -26,25 +26,15 @@ class _HomeState extends State<Home> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  bool noticeNotification=true;
-  bool quizNotification=true;
-  bool questionNotification=true;
+  bool noticeNotification;
+  bool quizNotification;
+  bool questionNotification;
 
   @override
   void initState() {
     super.initState();
 
-    getUser().then((user) {
-      if (user != null) {
-        // send the user to the home page
-//        counter.increment();
-        setState(() {
-          email3 = user.email;
-        });
 
-        print(user);
-      }
-    });
     getUserNotificationSetting();
   }
 
@@ -142,9 +132,22 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> getUserNotificationSetting() async {
+    await getUser().then((user) {
+      if (user != null) {
+        // send the user to the home page
+//        counter.increment();
+        setState(() {
+          email3 = user.email;
+        });
+
+        print(user);
+      }
+    });
+
+
     var document =
         await Firestore.instance.collection('tokens').document(email3).get();
-    setState(() async{
+    setState(() {
       noticeNotification = document['noticeNotification'];
       quizNotification = document['quizNotification'];
       questionNotification = document['questionNotification'];
