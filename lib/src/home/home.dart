@@ -24,14 +24,32 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  bool noticeNotification;
-  bool quizNotification;
-  bool questionNotification;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool noticeNotification=true;
+  bool quizNotification=true;
+  bool questionNotification=true;
 
   @override
   void initState() {
     super.initState();
+
+    getUser().then((user) {
+      if (user != null) {
+        // send the user to the home page
+//        counter.increment();
+        setState(() {
+          email3 = user.email;
+        });
+
+        print(user);
+      }
+    });
     getUserNotificationSetting();
+  }
+
+  Future<FirebaseUser> getUser() async {
+    return await _auth.currentUser();
   }
 
   @override
@@ -126,13 +144,11 @@ class _HomeState extends State<Home> {
   Future<void> getUserNotificationSetting() async {
     var document =
         await Firestore.instance.collection('tokens').document(email3).get();
-    setState(() {
+    setState(() async{
       noticeNotification = document['noticeNotification'];
       quizNotification = document['quizNotification'];
       questionNotification = document['questionNotification'];
     });
-
-    print(noticeNotification);
   }
 
   void _settingModalBottomSheet(context) {
