@@ -198,7 +198,6 @@ class _BlankQuizState extends State<BlankQuiz> {
                 await Firestore.instance.collection('quiz').add({
                   'question': _first.text + "\\blank\\" + _second.text,
                   'answer': _blank.text,
-                  'description': _blank.text,
                   'type': "blank",
                   'startTime': startTime,
                   'endTime': endTime

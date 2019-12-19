@@ -241,7 +241,7 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(left: 10, right: 50, top: 10),
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
               color: Colors.black26,
               borderRadius: BorderRadius.circular(18)),
@@ -252,10 +252,11 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
                       document['title'],
-                      textScaleFactor: 2,
+                      textScaleFactor: 1.5,
                       style: TextStyle(
                           color: Colors.orangeAccent,
                           fontWeight: FontWeight.bold),
@@ -352,7 +353,7 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
   Widget buildReplyTile(String questionID,DocumentSnapshot document) {
     return Container(
       margin: EdgeInsets.only(left: 50, right: 10, top: 10),
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
           color: Colors.black26, borderRadius: BorderRadius.circular(18)),
       child: Column(
@@ -360,11 +361,12 @@ class _QNAState extends State<QNA> with SingleTickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Icon(Icons.subdirectory_arrow_right),
               Text(
                 document['title'],
-                textScaleFactor: 2,
+                textScaleFactor: 1.5,
                 style: TextStyle(
                     color: Colors.cyanAccent, fontWeight: FontWeight.bold),
               ),

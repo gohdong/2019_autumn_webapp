@@ -213,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.question_answer),
-          title: Text('Q&A'),
+          title: Text('DEBATE'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.edit),
