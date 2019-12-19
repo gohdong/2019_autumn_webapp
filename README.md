@@ -16,7 +16,7 @@ Making [HYU ERICA SElab](https://selab.hanyang.ac.kr) Application Project
  Index| Name |Git|Achievements|
 ----|-----|---|---|
 1   |고동현|[gohdong](https://github.com/gohdong)|Quiz, Notice, Grade, Contact
-2   |김동현|[kimDDong](https://github.com/kimDDong)|-
+2   |김동현|[kimDDong](https://github.com/kimDDong)|Course
 3   |김두호|[Source-SC](https://github.com/Source-SC)|Member, Research
 4   |김예진|[hsh04060](https://github.com/hsh04060)|Publication
 5   |문수림|[sersue](https://github.com/sersue)|Course
